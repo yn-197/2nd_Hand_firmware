@@ -1,0 +1,19 @@
+#ifndef ALT_MAIN_H
+#define ALT_MAIN_H
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+#include "main.h"
+
+void alt_setup();
+void alt_main();
+void alt_loop();
+void ProcessCommand(char mode, int value);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* ALT_MAIN_H */
