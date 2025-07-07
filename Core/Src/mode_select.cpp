@@ -5,6 +5,7 @@
 #include "alt-main.h"
 #include "servo_control.h"
 #include "as5048a.h"
+#include "motion.h"
 #include <stdio.h>
 
 #define SELECT_TIMEOUT_MS 20000 // 20秒
@@ -12,6 +13,7 @@
 
 extern AS5048A as5048a[5];
 extern ServoController servoControllers[10];
+extern MotionController motionController;
 extern bool isServoPidOn[10];
 
 float current_angle[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -135,7 +137,8 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 1:
-        while(1){
+        while (1)
+        {
             for (size_t i = 0; i < 5; i++)
             {
                 HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
@@ -147,33 +150,39 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 2:
-    while (1)
-    {
-        ADC_ChannelConfTypeDef sConfig = { 0 };
-        sConfig.Channel = ADC_CHANNEL_0;
-		sConfig.Rank = ADC_REGULAR_RANK_1;
-		sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-		HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-		adc_val_ch0 = HAL_ADC_GetValue(&hadc1);
-		HAL_ADC_Stop(&hadc1);
+        while (1)
+        {
+            ADC_ChannelConfTypeDef sConfig = {0};
+            sConfig.Channel = ADC_CHANNEL_0;
+            sConfig.Rank = ADC_REGULAR_RANK_1;
+            sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+            HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+            HAL_ADC_Start(&hadc1);
+            HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+            adc_val_ch0 = HAL_ADC_GetValue(&hadc1);
+            HAL_ADC_Stop(&hadc1);
 
-		// チャンネル2の変換
-		sConfig.Channel = ADC_CHANNEL_2;
-		HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-		adc_val_ch2 = HAL_ADC_GetValue(&hadc1);
-		HAL_ADC_Stop(&hadc1);
+            // チャンネル2の変換
+            sConfig.Channel = ADC_CHANNEL_2;
+            HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+            HAL_ADC_Start(&hadc1);
+            HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+            adc_val_ch2 = HAL_ADC_GetValue(&hadc1);
+            HAL_ADC_Stop(&hadc1);
 
-        printf("%lu, %lu\n", adc_val_ch0, adc_val_ch2);
+            printf("%lu, %lu\n", adc_val_ch0, adc_val_ch2);
 
-        HAL_Delay(100);
-    }
+            HAL_Delay(100);
+        }
         break;
     case 3:
-        // モード3の処理
+        while (1)
+        {
+            motionController.setMotion(OPEN);
+            HAL_Delay(1000);
+            motionController.setMotion(CLOSE);
+            HAL_Delay(1000);
+        }
         break;
     case 4:
         while (1)

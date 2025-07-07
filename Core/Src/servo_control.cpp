@@ -5,25 +5,15 @@
 ServoController::ServoController(
 	TIM_HandleTypeDef* htim, uint32_t ch1, uint32_t ch2,
 	float _kp, float _ki, float _kd, float _target_angle,
-	uint16_t _output_limit, AS5048A* _encoder,
-	GPIO_TypeDef* gpio1, uint16_t pin1, GPIO_TypeDef* gpio2, uint16_t pin2, bool state
+	uint16_t _output_limit, AS5048A* _encoder, bool state
 ) {
 	if (state == 0) {
 		//pwm用設定
 		channel_in1 = ch1;
 		channel_in2 = ch2;
-		//onoff用設定
-		servo_gpio1 = gpio1;
-		servo_pin1 = pin1;
-		servo_gpio2 = gpio2;
-		servo_pin2 = pin2;
 	} else {
 		channel_in1 = ch2;
 		channel_in2 = ch1;
-		servo_gpio1 = gpio2;
-		servo_pin1 = pin2;
-		servo_gpio2 = gpio1;
-		servo_pin2 = pin1;
 	}
 	
 	htim_pwm = htim;
@@ -122,7 +112,7 @@ float ServoController::getOutput(){
 	return output;
 }
 
-
+/*
 //OnOff servo control
 OnOffServoController::OnOffServoController(GPIO_TypeDef* gpio1, uint16_t pin1, GPIO_TypeDef* gpio2, uint16_t pin2, bool state){
 	if(state == 0){
@@ -223,8 +213,4 @@ float AngleSetServoController::getCurrentAngle(){
 	return current_angle;
 }
 
-
-
-
-
-
+*/

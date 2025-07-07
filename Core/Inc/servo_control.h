@@ -26,10 +26,6 @@ private:
     TIM_HandleTypeDef* htim_pwm;   // PWM用タイマーのハンドル
     uint32_t channel_in1;          // PWMのIN1チャンネル
     uint32_t channel_in2;          // PWMのIN2チャンネル
-	GPIO_TypeDef* servo_gpio1;
-	uint16_t servo_pin1;
-	GPIO_TypeDef* servo_gpio2;
-	uint16_t servo_pin2;
     float kp, ki, kd;              // PIDゲイン
     float previous_diff;
     float integral;
@@ -53,10 +49,6 @@ public:
 		float _target_angle,
 		uint16_t _output_limit,
 		AS5048A* _encoder,
-		GPIO_TypeDef* gpio1,
-		uint16_t pin1,
-		GPIO_TypeDef* gpio2,
-		uint16_t pin2,
 		bool state
 	);
 
@@ -78,7 +70,7 @@ public:
     float getOutput();
 };
 
-class OnOffServoController {
+/*class OnOffServoController {
 private:
 	GPIO_TypeDef* servo_gpio1;
 	uint16_t servo_pin1;
@@ -116,7 +108,7 @@ public:
 	void setTargetAngle(float angle);
 
     float getCurrentAngle();
-};
+};*/
 
 
 #ifdef __cplusplus

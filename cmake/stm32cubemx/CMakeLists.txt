@@ -36,6 +36,7 @@ set(MX_Application_Src
     ${CMAKE_SOURCE_DIR}/Core/Src/as5048a.cpp
     ${CMAKE_SOURCE_DIR}/Core/Src/servo_control.cpp
     ${CMAKE_SOURCE_DIR}/Core/Src/mode_select.cpp
+    ${CMAKE_SOURCE_DIR}/Core/Src/motion.cpp
 )
 
 # STM32 HAL/LL Drivers

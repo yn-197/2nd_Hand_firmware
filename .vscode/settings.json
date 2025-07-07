@@ -8,6 +8,7 @@
     ],
     "files.associations": {
         "cstring": "cpp",
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "initializer_list": "cpp"
     }
 }

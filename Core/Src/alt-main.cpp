@@ -13,6 +13,7 @@
 #include "as5048a.h"
 #include "servo_control.h"
 #include "mode_select.hpp"
+#include "motion.h"
 
 #define UART1_RX_BUFFER_SIZE 1
 ModeSelector modeSelector(8);
@@ -38,21 +39,29 @@ AS5048A as5048a[5] = {
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
-    ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], GPIOE, GPIO_PIN_9, GPIOE, GPIO_PIN_11, true), // MP1
-    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], GPIOB, GPIO_PIN_10, GPIOB, GPIO_PIN_11, false), // PIP1
+    ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], true), // MP1
+    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], false), // PIP1
 
-    ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], GPIOD, GPIO_PIN_12, GPIOD, GPIO_PIN_13, true), // MP2
-    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], GPIOA, GPIO_PIN_2, GPIOA, GPIO_PIN_3, true),  // PIP2
+    ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], true), // MP2
+    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], true),  // PIP2
 
-    ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], GPIOD, GPIO_PIN_14, GPIOD, GPIO_PIN_15, false), // MP3
-    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], GPIOC, GPIO_PIN_6, GPIOC, GPIO_PIN_7, true),  // PIP3
+    ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], false), // MP3
+    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], true),  // PIP3
 
-    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], GPIOC, GPIO_PIN_8, GPIOC, GPIO_PIN_9, false), // MP4
-    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], GPIOA, GPIO_PIN_10, GPIOA, GPIO_PIN_11, true),  // CM
+    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], false), // MP4
+    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], true),  // CM
 
-    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], GPIOA, GPIO_PIN_15, GPIOA, GPIO_PIN_1, true), // PIP4
-    ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[4], GPIOE, GPIO_PIN_5, GPIOE, GPIO_PIN_6, false) // ABD
+    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], true), // PIP4
+    ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[4], false) // ABD
 };
+
+MotionController motionController(
+    &servoControllers[0], &servoControllers[1],
+    &servoControllers[2], &servoControllers[3],
+    &servoControllers[4], &servoControllers[5],
+    &servoControllers[6], &servoControllers[7],
+    &servoControllers[8], &servoControllers[9]
+);
 
 bool isServoPidOn[10] = {false, false, false, false, false, false, false, false, false, false};
 
@@ -93,6 +102,7 @@ void alt_setup()
     setbuf(stdout, NULL); // printfのバッファリングを無効化
     printf("System initialized.\n");
 }
+
 void alt_main()
 {
     // モード選択
