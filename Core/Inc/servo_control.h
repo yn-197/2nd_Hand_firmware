@@ -14,6 +14,8 @@ extern "C" {
 
 #include "main.h"
 #include "as5048a.h"
+#include "ma702.h"
+#include "encoder_base.h"
 
 typedef enum {
 	forward,
@@ -33,7 +35,8 @@ private:
     float current_angle;
     float output;
     uint16_t output_limit;
-    AS5048A* encoder;              // 角度センサのインスタンスを保持
+    EncoderBase* encoder;
+	MA702* ma702;
 	uint16_t zero_position;
 	float zero_position_map;
 
@@ -48,7 +51,7 @@ public:
 		float _kd,
 		float _target_angle,
 		uint16_t _output_limit,
-		AS5048A* _encoder,
+		EncoderBase* _encoder,
 		bool state
 	);
 

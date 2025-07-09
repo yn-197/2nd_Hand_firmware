@@ -14,6 +14,7 @@
 #include "servo_control.h"
 #include "mode_select.hpp"
 #include "motion.h"
+#include "ma702.h"
 
 #define UART1_RX_BUFFER_SIZE 1
 ModeSelector modeSelector(8);
@@ -33,26 +34,35 @@ AS5048A as5048a[5] = {
     AS5048A(&hspi1, SPI1_SS1_GPIO_Port, SPI1_SS1_Pin), // SPI1, encoder1, MP1
     AS5048A(&hspi2, SPI2_SS1_GPIO_Port, SPI2_SS1_Pin),  // SPI2, encoder2, MP2
     AS5048A(&hspi3, SPI3_SS1_GPIO_Port, SPI3_SS1_Pin), // SPI3, encoder3, MP3
-    AS5048A(&hspi4, SPI4_SS1_GPIO_Port, SPI4_SS1_Pin),  // SPI4, encoder4, MP4
-    AS5048A(&hspi5, SPI5_SS1_GPIO_Port, SPI5_SS1_Pin)  // SPI5, encoder5, ABD
+    AS5048A(&hspi4, SPI4_SS1_GPIO_Port, SPI4_SS1_Pin),  // SPI4, encoder4, ABD
+    AS5048A(&hspi5, SPI5_SS1_GPIO_Port, SPI5_SS2_Pin)  // SPI5, encoder5, MP4
 };
+
+MA702 ma702[5] = {
+    MA702(&hspi1, SPI1_SS2_GPIO_Port, SPI1_SS2_Pin), // PIP1
+    MA702(&hspi2, SPI2_SS2_GPIO_Port, SPI2_SS2_Pin), // PIP2
+    MA702(&hspi3, SPI3_SS2_GPIO_Port, SPI3_SS2_Pin), // PIP3
+    MA702(&hspi5, SPI5_SS2_GPIO_Port, SPI5_SS2_Pin),  // CM
+    MA702(&hspi5, SPI5_SS3_GPIO_Port, SPI5_SS3_Pin), // PIP4
+};
+
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
     ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], true), // MP1
-    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[0], false), // PIP1
+    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[0], false), // PIP1
 
     ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], true), // MP2
-    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[1], true),  // PIP2
+    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[1], true),  // PIP2
 
     ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], false), // MP3
-    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[2], true),  // PIP3
+    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[2], true),  // PIP3
 
-    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], false), // MP4
-    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], true),  // CM
+    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[4], false), // MP4
+    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[3], true),  // CM
 
-    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], true), // PIP4
-    ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[4], false) // ABD
+    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[4], true), // PIP4
+    ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a[3], false) // ABD
 };
 
 MotionController motionController(

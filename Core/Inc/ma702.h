@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file           : AS5048A.h
-  * @brief          : Header for as5048a.c file.
+  * @file           : ma702.h
+  * @brief          : Header for ma702.c file.
   *                   This file contains the common defines of the application.
   * @version		: 0.1
   ******************************************************************************
@@ -19,8 +19,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __AS5048A_H
-#define __AS5048A_H
+#ifndef __MA702_H
+#define __MA702_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,8 +31,11 @@ extern "C" {
 #include <math.h>
 #include "encoder_base.h"
 
-// --- クラス宣言はextern "C"の外で ---
-class AS5048A : public EncoderBase {
+#ifdef __cplusplus
+}
+#endif
+
+class MA702 : public EncoderBase {
 
     uint8_t errorFlag = 0;
     uint16_t _cs;
@@ -46,17 +49,18 @@ class AS5048A : public EncoderBase {
     uint16_t transaction(uint16_t data);
 
 public:
-    AS5048A(SPI_HandleTypeDef *hspi, GPIO_TypeDef* arg_ps, uint16_t arg_cs);
+    MA702(SPI_HandleTypeDef *hspi, GPIO_TypeDef* arg_ps, uint16_t arg_cs);
+
     void init();
     void close();
     void open();
     uint16_t read(uint16_t registerAddress);
     uint16_t write(uint16_t registerAddress, uint16_t data);
+
     uint16_t getRawRotation() override;
     int getRotation();
     uint16_t getState();
     uint8_t error();
-    uint8_t getGain();
     uint16_t getErrors();
     void setZeroPosition(uint16_t arg_position);
     uint16_t getZeroPosition();
@@ -64,24 +68,18 @@ public:
     float read2angle(uint16_t angle) override;
 
 private:
-    uint8_t spiCalcEvenParity(uint16_t value);
+
 };
 
-// --- 定数定義 ---
-const int AS5048A_CLEAR_ERROR_FLAG              = 0x0001;
-const int AS5048A_PROGRAMMING_CONTROL           = 0x0003;
-const int AS5048A_OTP_REGISTER_ZERO_POS_HIGH    = 0x0016;
-const int AS5048A_OTP_REGISTER_ZERO_POS_LOW     = 0x0017;
-const int AS5048A_DIAG_AGC                      = 0x3FFD;
-const int AS5048A_MAGNITUDE                     = 0x3FFE;
-const int AS5048A_ANGLE                         = 0x3FFF;
-const int AEAT9922_Angle                        = 0x0008;
+// 定数定義
+const int MA702_ZERO_POSITION_LOW = 0x00;
+const int MA702_ZERO_POSITION_HIGH = 0x01;
+const int MA702_ABZ_LOW = 0x04;
+const int MA702_ABZ_HIGH = 0x05;
+const int MA702_MAGNETIC_THRESHOLDS = 0x06;
+const int MA702_ROOTATION_DIRECTION = 0x09;
+const int MA702_MAGNET_FLAG = 0x1B;
 
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __AS5048A_H */
+#endif /* __MA702_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,11 +1,13 @@
 #include "servo_control.h"
 #include "main.h"
 #include "as5048a.h"
+#include "ma702.h"
+#include "encoder_base.h"
 
 ServoController::ServoController(
 	TIM_HandleTypeDef* htim, uint32_t ch1, uint32_t ch2,
 	float _kp, float _ki, float _kd, float _target_angle,
-	uint16_t _output_limit, AS5048A* _encoder, bool state
+	uint16_t _output_limit, EncoderBase* _encoder, bool state
 ) {
 	if (state == 0) {
 		//pwm用設定
