@@ -101,6 +101,12 @@ void alt_setup()
     HAL_TIM_PWM_Start(&htim9, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim9, TIM_CHANNEL_2);
 
+    HAL_GPIO_WritePin(SPI1_SS2_GPIO_Port, SPI1_SS2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SPI2_SS2_GPIO_Port, SPI2_SS2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SPI3_SS2_GPIO_Port, SPI3_SS2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SPI4_SS2_GPIO_Port, SPI4_SS2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SPI5_SS2_GPIO_Port, SPI5_SS2_Pin, GPIO_PIN_SET);
+
 
     cmdHandler.setCallback([](char mode, int value)
                            {

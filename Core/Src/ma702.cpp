@@ -47,8 +47,8 @@ void MA702::open(){
  * Read a register from the sensor
  */
 uint16_t MA702::read(uint16_t registerAddress){
-    uint8_t command1[2] = {0x40 | ((registerAddress >> 3) & 0x1F), (registerAddress << 5)};
-    uint8_t data1[2] = {0, 0};
+    uint8_t command1[2] = { static_cast<uint8_t>(0x40 | (registerAddress & 0x1F)), 0x00 };
+    uint8_t data1[2] = {0};
 
     MA702_EN_SPI;
     HAL_SPI_TransmitReceive(_spi, command1, data1, 2, 100);
@@ -70,13 +70,13 @@ uint16_t MA702::read(uint16_t registerAddress){
  */
 uint16_t MA702::getRawRotation(){
     uint8_t command[2] = {0x00, 0x00};
-    uint8_t data[2] = {0, 0};
+    uint8_t data[2] = {0};
 
     MA702_EN_SPI;
     HAL_SPI_TransmitReceive(_spi, command, data, 2, 100);
     MA702_DIS_SPI;
- 
-    uint16_t angle = ((uint16_t)data[0] << 8) | command[1];
+
+    uint16_t angle = (static_cast<uint16_t>(data[0]) << 8) | data[1];
     return angle >> 4; // 上位12bitが有効
 }
 

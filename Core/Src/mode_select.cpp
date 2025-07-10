@@ -12,6 +12,7 @@
 #define CHATTERING_DELAY_MS 30
 
 extern AS5048A as5048a[5];
+extern MA702 ma702[5];
 extern ServoController servoControllers[10];
 extern MotionController motionController;
 extern bool isServoPidOn[10];
@@ -192,7 +193,17 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 5:
-        // モード5の処理
+        while (1)
+        {
+            for (size_t i = 0; i < 5; i++)
+            {
+                HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+                current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()));
+                printf("[%d]: %f \t", i, current_angle[i]);
+            }
+            printf("\n");
+            HAL_Delay(100);
+        }
         break;
     case 6:
         // モード6の処理
