@@ -6,6 +6,8 @@
 #include "servo_control.h"
 #include "as5048a.h"
 #include "motion.h"
+#include "ma702.h"
+#include "flash.h"
 #include <stdio.h>
 
 #define SELECT_TIMEOUT_MS 20000 // 20秒
@@ -13,6 +15,7 @@
 
 extern AS5048A as5048a[5];
 extern MA702 ma702[5];
+extern float zero_position_map[10];
 extern ServoController servoControllers[10];
 extern MotionController motionController;
 extern bool isServoPidOn[10];
@@ -193,12 +196,17 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 5:
+        HAL_GPIO_WritePin(SPI1_SS1_GPIO_Port, SPI1_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI2_SS1_GPIO_Port, SPI2_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI3_SS1_GPIO_Port, SPI3_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI4_SS1_GPIO_Port, SPI4_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI5_SS1_GPIO_Port, SPI5_SS1_Pin, GPIO_PIN_SET);
         while (1)
         {
             for (size_t i = 0; i < 5; i++)
             {
                 HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-                current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()));
+                current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()) - zero_position_map[i]);
                 printf("[%d]: %f \t", i, current_angle[i]);
             }
             printf("\n");
@@ -206,7 +214,27 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 6:
-        // モード6の処理
+        HAL_GPIO_WritePin(SPI1_SS1_GPIO_Port, SPI1_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI2_SS1_GPIO_Port, SPI2_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI3_SS1_GPIO_Port, SPI3_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI4_SS1_GPIO_Port, SPI4_SS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI5_SS1_GPIO_Port, SPI5_SS1_Pin, GPIO_PIN_SET);
+        for (size_t i = 0; i < 5; i++)
+            {
+                zero_position_map[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()));
+                printf("[%d]: %f \t", i, zero_position_map[i]);
+            }
+        printf("\n");
+        Flash_WriteFloatArray(zero_position_map);
+        HAL_Delay(1000);
+
+        Flash_ReadFloatArray(zero_position_map);
+        printf("Zero position map: ");
+    for (int i = 0; i < 10; i++)    
+    {
+        printf("%f ", zero_position_map[i]);
+    }
+    printf("\n");
         break;
     case 7:
         // モード7の処理

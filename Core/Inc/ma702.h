@@ -54,8 +54,8 @@ public:
     void init();
     void close();
     void open();
-    uint16_t read(uint16_t registerAddress);
-    uint16_t write(uint16_t registerAddress, uint16_t data);
+    uint16_t read(uint8_t registerAddress);
+    uint16_t write(uint8_t registerAddress, uint8_t data);
 
     uint16_t getRawRotation() override;
     int getRotation();

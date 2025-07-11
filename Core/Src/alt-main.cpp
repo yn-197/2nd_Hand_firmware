@@ -15,6 +15,7 @@
 #include "mode_select.hpp"
 #include "motion.h"
 #include "ma702.h"
+#include "flash.h"
 
 #define UART1_RX_BUFFER_SIZE 1
 ModeSelector modeSelector(8);
@@ -46,6 +47,7 @@ MA702 ma702[5] = {
     MA702(&hspi5, SPI5_SS3_GPIO_Port, SPI5_SS3_Pin), // PIP4
 };
 
+float zero_position_map[10] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
@@ -100,6 +102,13 @@ void alt_setup()
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
     HAL_TIM_PWM_Start(&htim9, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim9, TIM_CHANNEL_2);
+    ma702[0].init();
+    ma702[1].init();
+    ma702[2].init();
+    ma702[3].init();
+    ma702[4].init();
+
+    Flash_ReadFloatArray(zero_position_map);
 
     HAL_GPIO_WritePin(SPI1_SS2_GPIO_Port, SPI1_SS2_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(SPI2_SS2_GPIO_Port, SPI2_SS2_Pin, GPIO_PIN_SET);
@@ -117,6 +126,12 @@ void alt_setup()
 
     setbuf(stdout, NULL); // printfのバッファリングを無効化
     printf("System initialized.\n");
+    printf("Zero position map: ");
+    for (int i = 0; i < 10; i++)    
+    {
+        printf("%f ", zero_position_map[i]);
+    }
+    printf("\n");
 }
 
 void alt_main()

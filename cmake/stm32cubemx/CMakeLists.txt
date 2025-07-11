@@ -38,6 +38,7 @@ set(MX_Application_Src
     ${CMAKE_SOURCE_DIR}/Core/Src/mode_select.cpp
     ${CMAKE_SOURCE_DIR}/Core/Src/motion.cpp
     ${CMAKE_SOURCE_DIR}/Core/Src/ma702.cpp
+    ${CMAKE_SOURCE_DIR}/Core/Src/flash.cpp
 )
 
 # STM32 HAL/LL Drivers

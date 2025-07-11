@@ -46,7 +46,7 @@ void MA702::open(){
 /*
  * Read a register from the sensor
  */
-uint16_t MA702::read(uint16_t registerAddress){
+uint16_t MA702::read(uint8_t registerAddress){
     uint8_t command1[2] = { static_cast<uint8_t>(0x40 | (registerAddress & 0x1F)), 0x00 };
     uint8_t data1[2] = {0};
 
@@ -70,14 +70,14 @@ uint16_t MA702::read(uint16_t registerAddress){
  */
 uint16_t MA702::getRawRotation(){
     uint8_t command[2] = {0x00, 0x00};
-    uint8_t data[2] = {0};
+    uint8_t data[2] = {0x00, 0x00};
 
     MA702_EN_SPI;
     HAL_SPI_TransmitReceive(_spi, command, data, 2, 100);
     MA702_DIS_SPI;
 
     uint16_t angle = (static_cast<uint16_t>(data[0]) << 8) | data[1];
-    return angle >> 4; // 上位12bitが有効
+    return angle;
 }
 
 /*
@@ -91,7 +91,7 @@ uint8_t MA702::error(){
  * Get and clear the error register by reading it
  */
 uint16_t MA702::getErrors(){
-    return MA702::read(MA702_MAGNET_FLAG);
+    //return MA702::read(MA702_MAGNET_FLAG);
 }
 
 /*
@@ -117,17 +117,5 @@ float MA702::normalize(float angle) {
  * EncoderBaseインターフェースに合わせて引数を追加
  */
 float MA702::read2angle(uint16_t angle) {
-    uint8_t zero_l = read(MA702_ZERO_POSITION_LOW);
-    uint8_t zero_h = read(MA702_ZERO_POSITION_HIGH);
-
-    uint16_t arg_position = (zero_h << 8) | zero_l;
-
-    // Adjust the angle based on the zero position
-    int32_t corrected_angle = (int32_t)angle - (65536 - arg_position) * 4096 / 65536;
-    
-    if (corrected_angle < 0) corrected_angle += 4096;
-    if (corrected_angle >= 4096) corrected_angle -= 4096;
-
-    // Convert to degrees
-    return (float)corrected_angle * 360.0f / 4096.0f;
+    return (360.0f * angle) / 65536.0f;
 }
