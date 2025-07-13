@@ -24,7 +24,7 @@ void AS5048A::init(){
 
 	AS5048A::close();
 	AS5048A::open();
-
+	DIS_SPI;
 
 }
 

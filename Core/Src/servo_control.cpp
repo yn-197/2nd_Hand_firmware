@@ -1,8 +1,4 @@
 #include "servo_control.h"
-#include "main.h"
-#include "as5048a.h"
-#include "ma702.h"
-#include "encoder_base.h"
 
 ServoController::ServoController(
 	TIM_HandleTypeDef* htim, uint32_t ch1, uint32_t ch2,
@@ -29,7 +25,6 @@ ServoController::ServoController(
 	output = 0.0f;
 	output_limit = _output_limit;
 	encoder = _encoder;
-	zero_position = 0;
 	zero_position_map = 0.0f;
 }
 
@@ -97,9 +92,8 @@ void ServoController::flowControl(float flow_rate, ControlMode control_mode)
 	}
 }
 
-void ServoController::setZeroPosition(){
-	zero_position = encoder->getRawRotation();
-	zero_position_map = encoder->read2angle(zero_position);
+void ServoController::setZeroPosition(float zero_position_value){
+	zero_position_map = zero_position_value;
 }
 
 void ServoController::setTargetAngle(float angle){

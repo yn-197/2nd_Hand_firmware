@@ -37,7 +37,6 @@ private:
     uint16_t output_limit;
     EncoderBase* encoder;
 	MA702* ma702;
-	uint16_t zero_position;
 	float zero_position_map;
 
 public:
@@ -62,7 +61,7 @@ public:
 
 	void flowControl(float flow_rate, ControlMode control_mode);
 
-    void setZeroPosition();
+    void setZeroPosition(float zero_position_value);
 
     // 目標角度を設定
     void setTargetAngle(float angle);

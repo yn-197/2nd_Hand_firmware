@@ -5,8 +5,6 @@
  extern "C" {
 #endif
 
-#include "main.h"
-
 void alt_setup();
 void alt_main();
 void alt_loop();

@@ -13,14 +13,14 @@
 #define SELECT_TIMEOUT_MS 20000 // 20秒
 #define CHATTERING_DELAY_MS 30
 
-extern AS5048A as5048a[5];
-extern MA702 ma702[5];
+extern AS5048A as5048a;
+extern MA702 ma702[9];
 extern float zero_position_map[10];
 extern ServoController servoControllers[10];
 extern MotionController motionController;
 extern bool isServoPidOn[10];
 
-float current_angle[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+float current_angle[9] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
 ModeSelector::ModeSelector(int mode_num)
     : mode_num_(mode_num), mode_(0), selected_mode_(-1), sw1_prev_(1), sw2_prev_(1)
@@ -143,12 +143,10 @@ void ModeSelector::executeSelectedMode()
     case 1:
         while (1)
         {
-            for (size_t i = 0; i < 5; i++)
-            {
-                HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-                current_angle[i] = as5048a[i].normalize(as5048a[i].read2angle(as5048a[i].getRawRotation()));
-                printf("[%d]: %f \t", i, current_angle[i]);
-            }
+            HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+            current_angle[0] = as5048a.normalize(as5048a.read2angle(as5048a.getRawRotation()) - zero_position_map[9]);
+            printf("[%d]: %f \t", 0, current_angle[0]);
+
             printf("\n");
             HAL_Delay(100);
         }
@@ -196,14 +194,9 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 5:
-        HAL_GPIO_WritePin(SPI1_SS1_GPIO_Port, SPI1_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI2_SS1_GPIO_Port, SPI2_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI3_SS1_GPIO_Port, SPI3_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI4_SS1_GPIO_Port, SPI4_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI5_SS1_GPIO_Port, SPI5_SS1_Pin, GPIO_PIN_SET);
         while (1)
         {
-            for (size_t i = 0; i < 5; i++)
+            for (size_t i = 0; i < 9; i++)
             {
                 HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
                 current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()) - zero_position_map[i]);
@@ -214,27 +207,24 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 6:
-        HAL_GPIO_WritePin(SPI1_SS1_GPIO_Port, SPI1_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI2_SS1_GPIO_Port, SPI2_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI3_SS1_GPIO_Port, SPI3_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI4_SS1_GPIO_Port, SPI4_SS1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(SPI5_SS1_GPIO_Port, SPI5_SS1_Pin, GPIO_PIN_SET);
-        for (size_t i = 0; i < 5; i++)
-            {
-                zero_position_map[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()));
-                printf("[%d]: %f \t", i, zero_position_map[i]);
-            }
+        // 原点の設定
+        for (size_t i = 0; i < 9; i++)
+        {
+            zero_position_map[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()));
+            printf("[%d]: %f \t", i, zero_position_map[i]);
+        }
+        zero_position_map[9] = as5048a.normalize(as5048a.read2angle(as5048a.getRawRotation()));
         printf("\n");
         Flash_WriteFloatArray(zero_position_map);
         HAL_Delay(1000);
 
         Flash_ReadFloatArray(zero_position_map);
         printf("Zero position map: ");
-    for (int i = 0; i < 10; i++)    
-    {
-        printf("%f ", zero_position_map[i]);
-    }
-    printf("\n");
+        for (int i = 0; i < 10; i++)    
+        {
+            printf("%f ", zero_position_map[i]);
+        }
+        printf("\n");
         break;
     case 7:
         // モード7の処理

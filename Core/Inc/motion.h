@@ -37,7 +37,7 @@ private:
 
 public:
 	MotionController(ServoController* _mp1, ServoController* _pip1, ServoController* _mp2, ServoController* _pip2,
-			ServoController* _mp3, ServoController* _pip3, ServoController* _mp4, ServoController* _cm, ServoController* _pip4, ServoController* _abd);
+			ServoController* _mp3, ServoController* _pip3, ServoController* _cm, ServoController* _mp4, ServoController* _pip4, ServoController* _abd);
 
     void setPosition(float mp1_angle, float pip1_angle, float mp2_angle, float pip2_angle,
                     float mp3_angle, float pip3_angle, float cm_angle, float mp4_angle, float pip4_angle, float abd_angle);

@@ -4,15 +4,15 @@
 extern bool isServoPidOn[10];
 
 MotionController::MotionController(ServoController* _mp1, ServoController* _pip1, ServoController* _mp2, ServoController* _pip2,
-			ServoController* _mp3, ServoController* _pip3, ServoController* _mp4, ServoController* _cm, ServoController* _pip4, ServoController* _abd){
+			ServoController* _mp3, ServoController* _pip3, ServoController* _cm, ServoController* _mp4, ServoController* _pip4, ServoController* _abd){
 	mp1 = _mp1;
 	pip1 = _pip1;
 	mp2 = _mp2;
 	pip2 = _pip2;
 	mp3 = _mp3;
 	pip3 = _pip3;
-    mp4 = _mp4;
 	cm = _cm;
+	mp4 = _mp4;
 	pip4 = _pip4;
 	abd = _abd;
 }
@@ -28,8 +28,8 @@ void MotionController::setPosition(float mp1_angle, float pip1_angle, float mp2_
     pip2->setTargetAngle(pip2_angle);
     mp3->setTargetAngle(mp3_angle);
     pip3->setTargetAngle(pip3_angle);
-    mp4->setTargetAngle(mp4_angle);
     cm->setTargetAngle(cm_angle);
+	mp4->setTargetAngle(mp4_angle);
     pip4->setTargetAngle(pip4_angle);
     abd->setTargetAngle(abd_angle);
 }

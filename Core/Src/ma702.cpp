@@ -21,6 +21,7 @@ MA702::MA702(SPI_HandleTypeDef* hspi, GPIO_TypeDef* arg_ps, uint16_t arg_cs){
 void MA702::init(){
     MA702::close();
     MA702::open();
+    MA702_DIS_SPI;
 }
 
 /**
