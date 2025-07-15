@@ -6,6 +6,9 @@
 #include "stm32f7xx_hal.h"
 #include "gpio.h"
 #include "usart.h"
+#include "motion.h"
+
+extern MotionController motionController;
 
 CommandHandler::CommandHandler() {}
 
@@ -49,7 +52,7 @@ void CommandHandler::parseCommand(const std::string& cmd) {
 }
 
 void ProcessCommand(char mode, int value) {
-    HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+    //HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
     switch (mode)
     {
     case 'M':
@@ -57,26 +60,36 @@ void ProcessCommand(char mode, int value) {
         {
         case 1: {
             // モードM、値1の処理
-            uint8_t msg[] = "start motion1\n";
-            HAL_UART_Transmit(&huart1, msg, sizeof(msg), HAL_MAX_DELAY);
+            printf("start motion1:OPEN\n");
+            motionController.setMotion(OPEN);
             break;
         }
         case 2: {
             // モードM、値2の処理
-            uint8_t msg2[] = "start motion2\n";
-            HAL_UART_Transmit(&huart1, msg2, sizeof(msg2), HAL_MAX_DELAY);
+            printf("start motion2:CLOSE\n");
+            motionController.setMotion(CLOSE);
+            break;
+        }
+        case 3: {
+            // モードM、値3の処理
+            printf("start motion3:STOP\n");
+            motionController.stopMotion();
+            break;
+        }
+        case 4: {
+            // モードM、値4の処理
+            printf("start motion4:position control\n");
+            motionController.setPosition(100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f);
             break;
         }
         default:
-            uint8_t msg_default[] = "unknown motion\n";
-            HAL_UART_Transmit(&huart1, msg_default, sizeof(msg_default), HAL_MAX_DELAY);
+            printf("unknown motion\n");
             break;
         }
         break;
     
     default:
-        uint8_t msg[] = "unknown command\n";
-        HAL_UART_Transmit(&huart1, msg, sizeof(msg), HAL_MAX_DELAY);
+        printf("unknown command: %c, value: %d\n", mode, value);
         break;
     }
 }

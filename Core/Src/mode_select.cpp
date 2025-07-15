@@ -20,7 +20,7 @@ extern ServoController servoControllers[10];
 extern MotionController motionController;
 extern bool isServoPidOn[10];
 
-float current_angle[9] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+extern float current_angle[9];
 
 ModeSelector::ModeSelector(int mode_num)
     : mode_num_(mode_num), mode_(0), selected_mode_(-1), sw1_prev_(1), sw2_prev_(1)
@@ -103,42 +103,6 @@ void ModeSelector::executeSelectedMode()
     switch (selected_mode_)
     {
     case 0:
-        isServoPidOn[0] = false;
-        isServoPidOn[1] = false;
-        isServoPidOn[2] = false;
-        isServoPidOn[3] = false;
-        isServoPidOn[4] = false;
-        isServoPidOn[5] = false;
-        isServoPidOn[6] = false;
-        isServoPidOn[7] = false;
-        isServoPidOn[8] = false;
-        isServoPidOn[9] = false;
-        while (1)
-        {
-            servoControllers[0].onOffControl(forward);
-            servoControllers[1].onOffControl(forward);
-            servoControllers[2].onOffControl(forward);
-            servoControllers[3].onOffControl(forward);
-            servoControllers[4].onOffControl(forward);
-            servoControllers[5].onOffControl(forward);
-            servoControllers[6].onOffControl(forward);
-            servoControllers[7].onOffControl(forward);
-            servoControllers[8].onOffControl(forward);
-            servoControllers[9].onOffControl(forward);
-            HAL_Delay(1000);
-            servoControllers[0].onOffControl(reverse);
-            servoControllers[1].onOffControl(reverse);
-            servoControllers[2].onOffControl(reverse);
-            servoControllers[3].onOffControl(reverse);
-            servoControllers[4].onOffControl(reverse);
-            servoControllers[5].onOffControl(reverse);
-            servoControllers[6].onOffControl(reverse);
-            servoControllers[7].onOffControl(reverse);
-            servoControllers[8].onOffControl(reverse);
-            servoControllers[9].onOffControl(reverse);
-            HAL_Delay(1000);
-            HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-        }
         break;
     case 1:
         while (1)
@@ -180,17 +144,75 @@ void ModeSelector::executeSelectedMode()
     case 3:
         while (1)
         {
-            motionController.setMotion(OPEN);
-            HAL_Delay(1000);
-            motionController.setMotion(CLOSE);
-            HAL_Delay(1000);
+            while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            motionController.setPosition(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+            HAL_Delay(500);
+
+            while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            motionController.setPosition(45.0f, 45.0f, 45.0f, 45.0f, 45.0f, 45.0f, 45.0f, 45.0f, 45.0f, 45.0f);
+            HAL_Delay(500);
+
+            while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            motionController.setPosition(90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f);
+            HAL_Delay(500);
+            
+            while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+            HAL_Delay(50);
+            motionController.stopMotion();
+            HAL_Delay(500);
         }
         break;
     case 4:
+        isServoPidOn[0] = false;
+        isServoPidOn[1] = false;
+        isServoPidOn[2] = false;
+        isServoPidOn[3] = false;
+        isServoPidOn[4] = false;
+        isServoPidOn[5] = false;
+        isServoPidOn[6] = false;
+        isServoPidOn[7] = false;
+        isServoPidOn[8] = false;
+        isServoPidOn[9] = false;
         while (1)
         {
+            servoControllers[0].onOffControl(forward);
+            servoControllers[1].onOffControl(forward);
+            servoControllers[2].onOffControl(forward);
+            servoControllers[3].onOffControl(forward);
+            servoControllers[4].onOffControl(forward);
+            servoControllers[5].onOffControl(forward);
+            servoControllers[6].onOffControl(forward);
+            servoControllers[7].onOffControl(forward);
+            servoControllers[8].onOffControl(forward);
+            servoControllers[9].onOffControl(forward);
+            HAL_Delay(1000);
+            servoControllers[0].onOffControl(reverse);
+            servoControllers[1].onOffControl(reverse);
+            servoControllers[2].onOffControl(reverse);
+            servoControllers[3].onOffControl(reverse);
+            servoControllers[4].onOffControl(reverse);
+            servoControllers[5].onOffControl(reverse);
+            servoControllers[6].onOffControl(reverse);
+            servoControllers[7].onOffControl(reverse);
+            servoControllers[8].onOffControl(reverse);
+            servoControllers[9].onOffControl(reverse);
+            HAL_Delay(1000);
             HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-            HAL_Delay(500);
         }
         break;
     case 5:

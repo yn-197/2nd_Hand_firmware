@@ -23,12 +23,17 @@ ModeSelector modeSelector(8);
 // コマンド処理関連変数
 CommandHandler cmdHandler;
 volatile bool uart1_data_ready = false;
-uint8_t uart1_rx_buffer[1];
+uint8_t uart1_rx_buffer[1] = {0};
 uint16_t uart1_rx_len = 1;
 volatile bool command_received = false;
 char received_mode;
 int received_value = 0;
 std::vector<uint8_t> uart1_cmd_buffer;
+volatile bool uart1_cmd_ready = false;
+
+float current_angle[9] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+
+int count = 0;
 
 // AS5048Aセンサーのインスタンス
 /*AS5048A as5048a[5] = {
@@ -124,6 +129,8 @@ void alt_setup()
         servoControllers[i].setZeroPosition(zero_position_map[i]);
     }
 
+    uart1_cmd_buffer.clear();
+
     cmdHandler.setCallback([](char mode, int value)
                            {
     // コマンド内容をグローバル変数に保存し、フラグを立てる
@@ -154,11 +161,26 @@ void alt_loop()
 {
     HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 
+    if (uart1_cmd_ready)
+    {
+        uart1_cmd_ready = false;
+        cmdHandler.onUartReceive(uart1_cmd_buffer.data(), uart1_cmd_buffer.size());
+        uart1_cmd_buffer.clear();
+    }
+    
     if (command_received)
     {
+        printf("Command received: mode=%c, value=%d\n", received_mode, received_value);
         command_received = false;
         ProcessCommand(received_mode, received_value);
     }
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()) - zero_position_map[i]);
+        printf("[%d]: %f \t", i, current_angle[i]);
+    }
+    printf("\n");
 
     HAL_Delay(500);
 }
@@ -169,10 +191,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if (huart->Instance == USART1)
     {
         uart1_cmd_buffer.push_back(uart1_rx_buffer[0]);
+        //HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
         if (uart1_rx_buffer[0] == '\n')
         {
-            cmdHandler.onUartReceive(uart1_cmd_buffer.data(), uart1_cmd_buffer.size());
-            uart1_cmd_buffer.clear();
+            uart1_cmd_ready = true;
         }
         HAL_UART_Receive_IT(&huart1, uart1_rx_buffer, UART1_RX_BUFFER_SIZE);
     }

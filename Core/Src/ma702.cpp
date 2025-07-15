@@ -118,5 +118,6 @@ float MA702::normalize(float angle) {
  * EncoderBaseインターフェースに合わせて引数を追加
  */
 float MA702::read2angle(uint16_t angle) {
+    angle = -(int16_t)angle + 360; //反転処理(要修正)
     return (360.0f * angle) / 65536.0f;
 }

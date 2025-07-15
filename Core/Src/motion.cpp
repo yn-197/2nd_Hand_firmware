@@ -187,6 +187,9 @@ void MotionController::setMotion(HandMotion hand_motion){
 }
 
 void MotionController::stopMotion(){
+	for (int i = 0; i < 10; ++i) {
+        isServoPidOn[i] = false;
+    }
 	mp1->onOffControl(stop);
 	mp2->onOffControl(stop);
 	mp3->onOffControl(stop);
