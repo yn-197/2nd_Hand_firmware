@@ -105,71 +105,61 @@ void ProcessCommand(char mode, int value1, int value2) {
     case 'P':
         switch (value1)
         {
-        case 1: {
+        case 1: 
             printf("start position control:MP1, %d\n", value2);
             isServoPidOn[0] = true;
             servoControllers[0].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 2: {
+        case 2:
             printf("start position control:PIP1, %d\n", value2);
             isServoPidOn[1] = true;
             servoControllers[1].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 3: {
+        case 3: 
             printf("start position control:MP2, %d\n", value2);
             isServoPidOn[2] = true;
             servoControllers[2].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 4: {
+        case 4: 
             printf("start position control:PIP2, %d\n", value2);
             isServoPidOn[3] = true;
             servoControllers[3].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 5: {
+        case 5: 
             printf("start position control:MP3, %d\n", value2);
             isServoPidOn[4] = true;
             servoControllers[4].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 6: {
+        case 6: 
             printf("start position control:PIP3, %d\n", value2);
             isServoPidOn[5] = true;
             servoControllers[5].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 7: {
+        case 7: 
             printf("start position control:CM, %d\n", value2);
             isServoPidOn[6] = true;
             servoControllers[6].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 8: {
+        case 8: 
             printf("start position control:MP4, %d\n", value2);
             isServoPidOn[7] = true;
             servoControllers[7].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 9: {
+        case 9: 
             printf("start position control:PIP4, %d\n", value2);
             isServoPidOn[8] = true;
             servoControllers[8].setTargetAngle(static_cast<float>(value2));
             break;
-        }
-        case 10: {
+        case 10: 
             printf("start position control:ABD, %d\n", value2);
             isServoPidOn[9] = true;
             servoControllers[9].setTargetAngle(static_cast<float>(value2));
             break;
-        }
         default:
             printf("unknown position command\n");
             break;
         }
-
+        break;
     default:
         printf("unknown command: %c, value1: %d, value2: %d\n", mode, value1, value2);
         break;

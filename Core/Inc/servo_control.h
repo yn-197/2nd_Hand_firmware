@@ -38,6 +38,7 @@ private:
     EncoderBase* encoder;
 	MA702* ma702;
 	float zero_position_map;
+	float scale;
 
 public:
     // コンストラクタ
@@ -51,7 +52,8 @@ public:
 		float _target_angle,
 		uint16_t _output_limit,
 		EncoderBase* _encoder,
-		bool state
+		bool state,
+		float _scale
 	);
 
     // PID計算とPWM出力

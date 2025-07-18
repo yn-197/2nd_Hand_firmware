@@ -3,7 +3,7 @@
 ServoController::ServoController(
 	TIM_HandleTypeDef* htim, uint32_t ch1, uint32_t ch2,
 	float _kp, float _ki, float _kd, float _target_angle,
-	uint16_t _output_limit, EncoderBase* _encoder, bool state
+	uint16_t _output_limit, EncoderBase* _encoder, bool state, float _scale
 ) {
 	if (state == 0) {
 		//pwm用設定
@@ -26,6 +26,7 @@ ServoController::ServoController(
 	output_limit = _output_limit;
 	encoder = _encoder;
 	zero_position_map = 0.0f;
+	scale = _scale;
 }
 
 void ServoController::control(){
@@ -97,6 +98,7 @@ void ServoController::setZeroPosition(float zero_position_value){
 }
 
 void ServoController::setTargetAngle(float angle){
+	angle *= scale; // スケールを適用
 	if(angle < 0) angle = 0;
 	if(angle > 180) angle = 180;
 	target_angle = angle;
