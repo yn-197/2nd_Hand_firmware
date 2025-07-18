@@ -76,6 +76,8 @@ ServoController servoControllers[10] = {
 
     ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[8], false, 40.0f/90.0f), // PIP4
     ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a, false, 1) // ABD
+
+    //左手の場合はCM，MP4，PIP4のみtrue-falseを反転
 };
 
 MotionController motionController(
