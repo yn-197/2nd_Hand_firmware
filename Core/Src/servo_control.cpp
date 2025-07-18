@@ -15,7 +15,7 @@ ServoController::ServoController(
 	}
 	
 	htim_pwm = htim;
-	kp = _kp;
+	kp = _kp * scale; //Pのズレを修正
 	ki = _ki;
 	kd = _kd;
 	previous_diff = 0.0f;
