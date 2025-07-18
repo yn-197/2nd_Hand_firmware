@@ -97,6 +97,8 @@ void ServoController::setZeroPosition(float zero_position_value){
 }
 
 void ServoController::setTargetAngle(float angle){
+	if(angle < 0) angle = 0;
+	if(angle > 180) angle = 180;
 	target_angle = angle;
 }
 

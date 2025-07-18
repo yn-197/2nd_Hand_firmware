@@ -7,7 +7,7 @@
 
 class CommandHandler {
 public:
-    using Callback = std::function<void(char mode, int value)>;
+    using Callback = std::function<void(char mode, int value1, int value2)>;
 
     CommandHandler();
     void setCallback(Callback cb);
@@ -23,7 +23,7 @@ private:
 extern "C" {
 #endif
 
-void ProcessCommand(char mode, int value);
+void ProcessCommand(char mode, int value1, int value2);
 
 #ifdef __cplusplus
 }

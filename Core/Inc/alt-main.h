@@ -8,7 +8,6 @@
 void alt_setup();
 void alt_main();
 void alt_loop();
-void ProcessCommand(char mode, int value);
 
 #ifdef __cplusplus
 }

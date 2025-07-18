@@ -27,7 +27,8 @@ uint8_t uart1_rx_buffer[1] = {0};
 uint16_t uart1_rx_len = 1;
 volatile bool command_received = false;
 char received_mode;
-int received_value = 0;
+int received_value1 = 0;
+int received_value2 = 0;
 std::vector<uint8_t> uart1_cmd_buffer;
 volatile bool uart1_cmd_ready = false;
 
@@ -61,19 +62,19 @@ float zero_position_map[10] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
-    ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[0], true), // MP1
-    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[1], false), // PIP1
+    ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[0], false), // MP1
+    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[1], true), // PIP1
 
-    ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[2], true), // MP2
-    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[3], true),  // PIP2
+    ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[2], false), // MP2
+    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[3], false),  // PIP2
 
-    ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[4], false), // MP3
-    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[5], true),  // PIP3
+    ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[4], true), // MP3
+    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[5], false),  // PIP3
 
-    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[6], true),  // CM
-    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[7], false), // MP4
+    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[6], false),  // CM
+    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[7], true), // MP4
 
-    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[8], true), // PIP4
+    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[8], false), // PIP4
     ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a, false) // ABD
 };
 
@@ -131,12 +132,14 @@ void alt_setup()
 
     uart1_cmd_buffer.clear();
 
-    cmdHandler.setCallback([](char mode, int value)
-                           {
-    // コマンド内容をグローバル変数に保存し、フラグを立てる
-    received_mode = mode;
-    received_value = value;
-    command_received = true; });
+    cmdHandler.setCallback([](char mode, int value1, int value2) 
+    {
+        // コマンド内容をグローバル変数に保存し、フラグを立てる
+        received_mode = mode;
+        received_value1 = value1;
+        received_value2 = value2;
+        command_received = true;
+    });
 
     setbuf(stdout, NULL); // printfのバッファリングを無効化
     printf("System initialized.\n");
@@ -170,9 +173,9 @@ void alt_loop()
     
     if (command_received)
     {
-        printf("Command received: mode=%c, value=%d\n", received_mode, received_value);
+        printf("Command received: mode=%c, value1=%d, value2=%d\n", received_mode, received_value1, received_value2);
         command_received = false;
-        ProcessCommand(received_mode, received_value);
+        ProcessCommand(received_mode, received_value1, received_value2);
     }
 
     for (size_t i = 0; i < 9; i++)
