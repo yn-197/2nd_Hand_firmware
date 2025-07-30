@@ -97,6 +97,30 @@ void ProcessCommand(char mode, int value1, int value2) {
             motionController.setPosition(100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f);
             break;
         }
+        case 5: {
+            // モードM、値5の処理
+            printf("start motion5:GRASP\n");
+            motionController.setMotion(GRASP);
+            break;
+        }
+        case 6: {
+            // モードM、値6の処理
+            printf("start motion6:GRIP\n");
+            motionController.setMotion(GRIP);
+            break;
+        }
+        case 7: {
+            // モードM、値7の処理
+            printf("start motion7:PEACE\n");
+            motionController.setMotion(PEACE);
+            break;
+        }
+        case 8: {
+            // モードM、値8の処理
+            printf("start motion8:ORDER\n");
+            motionController.setMotion(ORDER);
+            break;
+        }
         default:
             printf("unknown motion\n");
             break;

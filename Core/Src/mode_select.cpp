@@ -249,6 +249,19 @@ void ModeSelector::executeSelectedMode()
         printf("\n");
         break;
     case 7:
+        motionController.setMotion(ORDER);
+        HAL_Delay(1000);
+        motionController.setMotion(PEACE);
+        HAL_Delay(1000);
+        motionController.setMotion(GRIP);
+        HAL_Delay(1000);
+        motionController.setMotion(GRASP);
+        HAL_Delay(1000);
+        motionController.setMotion(CLOSE);
+        HAL_Delay(1000);
+        motionController.setMotion(OPEN);
+        HAL_Delay(1000);
+        motionController.stopMotion();
         // モード7の処理
         break;
     default:
