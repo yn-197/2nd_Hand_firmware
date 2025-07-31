@@ -110,6 +110,13 @@ float MA702::normalize(float angle) {
     if (angle < 0) {
         angle += 360;
     }
+
+    //歪み処理
+    if(angle <= 180){
+        angle = 90 + atan(tan((angle - 90) * M_PI / 180.0f) / k_ratio) * 180.0f / M_PI;
+    }else if(angle > 180){
+        angle = 270 + atan(tan((angle - 270) * M_PI / 180.0f) / k_ratio) * 180.0f / M_PI;
+    }
     return angle;
 }
 
@@ -120,4 +127,15 @@ float MA702::normalize(float angle) {
 float MA702::read2angle(uint16_t angle) {
     angle = -(int16_t)angle + 360; //反転処理(要修正)
     return (360.0f * angle) / 65536.0f;
+}
+
+float MA702::getKRatio(float angle1, float angle2) {
+    if(angle1 == 0 || angle1 == 90 || angle1 == 180 || angle1 == 270 || 
+        angle2 == 0 || angle2 == 90 || angle2 == 180 || angle2 == 270) {
+        angle1 += 0.0001f; // Avoid division by zero
+        angle2 += 0.0001f; // Avoid division by zero
+    }
+
+    float k0 = sqrt(-tan((angle1 - 90) * M_PI / 180.0f) * tan((angle2 - 90) * M_PI / 180.0f));//angle1，angle2間が90度のとき
+    return k0;
 }

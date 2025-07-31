@@ -2,7 +2,7 @@
 #include "stm32f7xx_hal.h"
 
 #define FLASH_USER_SECTOR_START 0x081C0000 // use sector 23 for user data
-#define NUM_FLOATS 10
+#define NUM_FLOATS 12
 
 
 void Flash_WriteFloatArray(float* data) {

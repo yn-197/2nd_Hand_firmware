@@ -216,17 +216,44 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 5:
-        while (1)
+        //k値推定処理
+
+        //指伸ばし時角度
+        while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+        HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+        HAL_Delay(50);
+        HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+        HAL_Delay(50);
+        float PIP1_angle1 = ma702[1].normalize(ma702[1].read2angle(ma702[1].getRawRotation()));
+        float PIP2_angle1 = ma702[3].normalize(ma702[3].read2angle(ma702[3].getRawRotation()));
+        float PIP3_angle1 = ma702[5].normalize(ma702[5].read2angle(ma702[5].getRawRotation()));
+
+        //指曲げ時角度
+        while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
+        HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+        HAL_Delay(50);
+        HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+        HAL_Delay(50);
+
+        float PIP1_angle2 = ma702[1].normalize(ma702[1].read2angle(ma702[1].getRawRotation()));
+        float PIP2_angle2 = ma702[3].normalize(ma702[3].read2angle(ma702[3].getRawRotation()));
+        float PIP3_angle2 = ma702[5].normalize(ma702[5].read2angle(ma702[5].getRawRotation()));
+
+        float k1 = ma702[1].getKRatio(PIP1_angle1, PIP1_angle2);
+        float k2 = ma702[3].getKRatio(PIP2_angle1, PIP2_angle2);
+        float k3 = ma702[5].getKRatio(PIP3_angle1, PIP3_angle2);
+        printf("k1: %f, k2: %f, k3: %f\n", k1, k2, k3);
+
+        zero_position_map[10] = (k1 + k2 + k3) / 3.0f;
+        Flash_WriteFloatArray(zero_position_map);
+        HAL_Delay(1000);
+        Flash_ReadFloatArray(zero_position_map);
+        printf("Zero position map: ");
+        for (int i = 0; i < 12; i++)
         {
-            for (size_t i = 0; i < 9; i++)
-            {
-                HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-                current_angle[i] = ma702[i].normalize(ma702[i].read2angle(ma702[i].getRawRotation()) - zero_position_map[i]);
-                printf("[%d]: %f \t", i, current_angle[i]);
-            }
-            printf("\n");
-            HAL_Delay(100);
+            printf("%f ", zero_position_map[i]);
         }
+        printf("\n");
         break;
     case 6:
         // 原点の設定

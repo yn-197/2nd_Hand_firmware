@@ -58,23 +58,23 @@ MA702 ma702[9] = {
     MA702(&hspi5, SPI5_SS3_GPIO_Port, SPI5_SS3_Pin), // PIP4
 };
 
-float zero_position_map[10] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; //mp1, pip1, mp2, pip2, mp3, pip3, cm, mp4, pip4, abd
+float zero_position_map[12] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; //mp1, pip1, mp2, pip2, mp3, pip3, cm, mp4, pip4, abd 下2つはk値
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
     ServoController(&htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[0], false, 1), // MP1
-    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[1], true, 35.0f/90.0f), // PIP1
+    ServoController(&htim2, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[1], true, 1/*35.0f/90.0f*/), // PIP1
 
     ServoController(&htim12, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[2], false, 1), // MP2
-    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[3], false, 105.0f/90.0f),  // PIP2
+    ServoController(&htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[3], false, 1/*105.0f/90.0f*/),  // PIP2
 
     ServoController(&htim4, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[4], true, 1), // MP3
-    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[5], false, 32.0f/90.0f),  // PIP3
+    ServoController(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[5], false, 1/*32.0f/90.0f*/),  // PIP3
 
-    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[6], false, 1),  // CM
-    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[7], true, 1), // MP4
+    ServoController(&htim1, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[6], true, 1),  // CM
+    ServoController(&htim3, TIM_CHANNEL_3, TIM_CHANNEL_4, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[7], false, 1), // MP4
 
-    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[8], false, 40.0f/90.0f), // PIP4
+    ServoController(&htim2, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &ma702[8], true, 1/*40.0f/90.0f*/), // PIP4
     ServoController(&htim9, TIM_CHANNEL_1, TIM_CHANNEL_2, 30.0f, 0.0f, 0.0f, 90.0f, 1200, &as5048a, false, 1) // ABD
 
     //左手の場合はCM，MP4，PIP4のみtrue-falseを反転
@@ -132,6 +132,11 @@ void alt_setup()
         servoControllers[i].setZeroPosition(zero_position_map[i]);
     }
 
+    // k値の設定
+    ma702[1].setKRatio(zero_position_map[10]);
+    ma702[3].setKRatio(zero_position_map[10]);
+    ma702[5].setKRatio(zero_position_map[10]);
+
     uart1_cmd_buffer.clear();
 
     cmdHandler.setCallback([](char mode, int value1, int value2) 
@@ -146,7 +151,7 @@ void alt_setup()
     setbuf(stdout, NULL); // printfのバッファリングを無効化
     printf("System initialized.\n");
     printf("Zero position map: ");
-    for (int i = 0; i < 10; i++)    
+    for (int i = 0; i < 12; i++)    
     {
         printf("%f ", zero_position_map[i]);
     }

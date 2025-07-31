@@ -47,6 +47,7 @@ class MA702 : public EncoderBase {
     uint8_t clk;
     uint16_t position;
     uint16_t transaction(uint16_t data);
+    float k_ratio = 1.0f; //歪み量　1.0fは歪みなし
 
 public:
     MA702(SPI_HandleTypeDef *hspi, GPIO_TypeDef* arg_ps, uint16_t arg_cs);
@@ -66,6 +67,10 @@ public:
     uint16_t getZeroPosition();
     float normalize(float angle) override;
     float read2angle(uint16_t angle) override;
+    float getKRatio(float angle1, float angle2);
+    void setKRatio(float k_ratio) {
+        this->k_ratio = k_ratio;
+    }
 
 private:
 
