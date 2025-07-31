@@ -215,7 +215,7 @@ void ModeSelector::executeSelectedMode()
             HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
         }
         break;
-    case 5:
+    case 5:{
         //k値推定処理
 
         //指伸ばし時角度
@@ -255,6 +255,7 @@ void ModeSelector::executeSelectedMode()
         }
         printf("\n");
         break;
+    }
     case 6:
         // 原点の設定
         for (size_t i = 0; i < 9; i++)
