@@ -3,6 +3,7 @@
 #include "stm32f7xx_hal.h"
 #include "stdio.h"
 #include <string.h>
+#include <math.h>
 
 #include "spi.h"
 #include "tim.h"
@@ -58,7 +59,7 @@ MA702 ma702[9] = {
     MA702(&hspi5, SPI5_SS3_GPIO_Port, SPI5_SS3_Pin), // PIP4
 };
 
-float zero_position_map[12] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; //mp1, pip1, mp2, pip2, mp3, pip3, cm, mp4, pip4, abd 下2つはk値
+float zero_position_map[12] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}; //mp1, pip1, mp2, pip2, mp3, pip3, cm, mp4, pip4, abd 下2つはk値
 
 // サーボコントローラーのインスタンス
 ServoController servoControllers[10] = {
@@ -131,11 +132,11 @@ void alt_setup()
     {
         servoControllers[i].setZeroPosition(zero_position_map[i]);
     }
-
     // k値の設定
     ma702[1].setKRatio(zero_position_map[10]);
     ma702[3].setKRatio(zero_position_map[10]);
     ma702[5].setKRatio(zero_position_map[10]);
+
 
     uart1_cmd_buffer.clear();
 

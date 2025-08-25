@@ -105,19 +105,27 @@ void ModeSelector::executeSelectedMode()
     case 0:
         break;
     case 1:
-        while (1)
-        {
-            HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-            current_angle[0] = as5048a.normalize(as5048a.read2angle(as5048a.getRawRotation()) - zero_position_map[9]);
-            printf("[%d]: %f \t", 0, current_angle[0]);
-
-            printf("\n");
-            HAL_Delay(100);
-        }
+        zero_position_map[10] = 1.0f;
+        zero_position_map[11] = 1.0f;
+        Flash_WriteFloatArray(zero_position_map);
+        HAL_Delay(1000);
         break;
-    case 2:
+    case 2:{
+        int count = 0;
+        int count_limit = 10000;
+        int read_count = 0;
         while (1)
         {
+            if(count == count_limit){
+                count = 0;
+            }
+
+            float rad = (float)count / (float)count_limit * 2.0f * 3.14159f;
+            float sin_val = sinf(rad);
+            ControlMode direction = (sin_val >= 0) ? forward : reverse;
+            servoControllers[0].flowControl(std::abs(sin_val)*1200, direction);
+
+            if(read_count == 10){
             ADC_ChannelConfTypeDef sConfig = {0};
             sConfig.Channel = ADC_CHANNEL_0;
             sConfig.Rank = ADC_REGULAR_RANK_1;
@@ -134,13 +142,18 @@ void ModeSelector::executeSelectedMode()
             HAL_ADC_Start(&hadc1);
             HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
             adc_val_ch2 = HAL_ADC_GetValue(&hadc1);
-            HAL_ADC_Stop(&hadc1);
+            HAL_ADC_Stop(&hadc1); 
 
             printf("%lu, %lu\n", adc_val_ch0, adc_val_ch2);
+            read_count = 0;
+            }
 
-            HAL_Delay(100);
+            HAL_Delay(10);
+            read_count++;
+            count += 10;
         }
         break;
+    }
     case 3:
         while (1)
         {
