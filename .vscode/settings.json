@@ -9,6 +9,7 @@
     "files.associations": {
         "cstring": "cpp",
         "cstdint": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "cmath": "cpp"
     }
 }
