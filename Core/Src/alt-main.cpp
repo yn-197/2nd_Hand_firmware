@@ -132,14 +132,10 @@ void alt_setup()
     {
         servoControllers[i].setZeroPosition(zero_position_map[i]);
     }
-    // k値の設定（nanなら1.0fを代入）
-    float k_val = zero_position_map[10];
-    if (isnan(k_val)) {
-        k_val = 1.0f;
-    }
-    ma702[1].setKRatio(k_val);
-    ma702[3].setKRatio(k_val);
-    ma702[5].setKRatio(k_val);
+    // k値の設定
+    ma702[1].setKRatio(zero_position_map[10]);
+    ma702[3].setKRatio(zero_position_map[10]);
+    ma702[5].setKRatio(zero_position_map[10]);
 
 
     uart1_cmd_buffer.clear();

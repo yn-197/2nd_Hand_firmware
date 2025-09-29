@@ -229,9 +229,13 @@ void ModeSelector::executeSelectedMode()
         }
         break;
     case 5:{
+        ma702[1].setKRatio(1.0f);
+        ma702[3].setKRatio(1.0f);
+        ma702[5].setKRatio(1.0f);
         //k値推定処理
 
         //指伸ばし時角度
+        HAL_Delay(500);
         while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
         HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
         HAL_Delay(50);
@@ -240,7 +244,8 @@ void ModeSelector::executeSelectedMode()
         float PIP1_angle1 = ma702[1].normalize(ma702[1].read2angle(ma702[1].getRawRotation()));
         float PIP2_angle1 = ma702[3].normalize(ma702[3].read2angle(ma702[3].getRawRotation()));
         float PIP3_angle1 = ma702[5].normalize(ma702[5].read2angle(ma702[5].getRawRotation()));
-
+        HAL_Delay(500);
+        
         //指曲げ時角度
         while(HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_SET)HAL_Delay(30);
         HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
